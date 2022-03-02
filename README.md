@@ -8,7 +8,7 @@ creating instances and running some scripts
 
 1. create aws account
 
-2. create key-pair (pem file)
+2. create key-pair (pem file), security group for ssh only with same name.
 
 3. avoid asking for pem on each ssh
 ```
