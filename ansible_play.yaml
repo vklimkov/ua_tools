@@ -1,0 +1,33 @@
+---
+- name: Install Docker
+  hosts: all
+  any_errors_fatal: true
+  vars:
+    docker_edition: 'ce'
+    docker_package: "docker-{{ docker_edition }}"
+    docker_package_state: latest
+    ocker_service_state: started
+    docker_service_enabled: true
+    docker_restart_handler_state: restarted
+    pip_package: python3-pip
+    pip_executable: pip3
+    pip_install_packages:
+      - name: docker
+        state: latest
+  roles:
+    - geerlingguy.pip
+    - geerlingguy.docker
+- name: Docker Permissions
+  hosts: all
+  any_errors_fatal: true
+  vars:
+    file:
+      src: /var/run/docker.sock
+      mode: 666
+- name: Copy script to stop the docker
+  hosts: all
+  any_errors_fatal: true
+  vars:
+    copy:
+      src: "{{ playbook_dir }}/clean_docker.sh"
+      dest: clean_docker.sh
