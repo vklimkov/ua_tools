@@ -26,10 +26,11 @@ popd
 ## Use instances
 
 ```bash
+# put all urls to file, i.e. http://google.com:8080
 # stop all the dockers if anything is running
 bash stop_all.sh
 # run flood attack, where sber - file with urls
-bash run_ddos.sh --url sber --attack flood --nj 1000
+bash run_ddos.sh --url sber --attack flood --nj 1000 [--protocol UDP]
 ```
 
 ## Stop instances

