@@ -7,7 +7,7 @@ EOF
 
 
 url_list=""
-nj="1000"
+nj="1500"
 attack="stress"
 protocol="TCP"
 while [ "$1" != "" ]; do
