@@ -11,8 +11,10 @@ fi
 
 ips="$(cat $ips_path | tr '\n' ',')"
 script_dir=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
-ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i ${ips} -u $user -b ${script_dir}/ansible_play.yaml
 
+for i in $(cat $ips_path) ; do ssh ubuntu@$i sudo apt-get update ; done
+
+ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i ${ips} -u $user -b ${script_dir}/ansible_play.yaml
 
 # so docker works
 for i in $(cat $ips_path) ; do ssh ubuntu@$i sudo chmod 666 /var/run/docker.sock ; done
